@@ -1,4 +1,4 @@
-package me.salieri;
+package me.salieri.lab1;
 
 class Lab1 {
   public static void sieveOfEratosthenes(int n) {
