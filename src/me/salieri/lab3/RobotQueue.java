@@ -19,7 +19,7 @@ public class RobotQueue {
       students.put(subject, new ConcurrentLinkedQueue<>());
     }
 
-    TeacherRobot physRobot = new TeacherRobot(Subject.PHYS, this, "Романатор");
+    TeacherRobot physRobot = new TeacherRobot(Subject.PHYS, this, "Поповнатор");
     TeacherRobot progRobot = new TeacherRobot(Subject.PROG, this, "Мартынатор");
     TeacherRobot mathRobot = new TeacherRobot(Subject.MATH, this, "Подсыпатор");
     teachers.put(Subject.PHYS, physRobot);
