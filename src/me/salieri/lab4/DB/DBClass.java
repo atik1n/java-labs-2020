@@ -52,58 +52,31 @@ public class DBClass extends ADBClass {
 
   @Override
   public void add(Scanner s) {
-    query = "INSERT INTO " + dbTable + "(prodid, title, price) VALUES (?, ?, ?)";
-    String subQuery = "SELECT EXISTS(SELECT title FROM " + dbTable + " WHERE title = ?)";
-    try {
-      statement = connection.prepareStatement(query);
-      PreparedStatement subStatement = connection.prepareStatement(subQuery);
-
-      if (s.hasNext()) {
-        String title = s.next();
-        int prodid = title.hashCode();
-
-        statement.setInt(1, prodid);
-        statement.setString(2, title);
-        subStatement.setString(1, title);
-      } else {
-        System.out.println("Incorrect title!");
-        return;
-      }
-
-      if (s.hasNextInt()) {
-        statement.setInt(3, s.nextInt());
-      } else {
-        System.out.println("Incorrect price!");
-        return;
-      }
-
-      ResultSet rs = subStatement.executeQuery();
-      if (!rs.getBoolean(1)) {
-        statement.execute();
-      } else {
-        System.out.println("There is existing goods with given title.");
-      }
-    } catch (SQLException e) {
-      printException(e, "add");
+    String title;
+    if (s.hasNext()) {
+      title = s.next();
+    } else {
+      System.out.println("Incorrect title!");
+      return;
     }
+
+    int price;
+    if (s.hasNextInt()) {
+      price = s.nextInt();
+    } else {
+      System.out.println("Incorrect price!");
+      return;
+    }
+
+    addItem(title, price);
   }
 
   @Override
   public void delete(Scanner s) {
-    query = "DELETE FROM " + dbTable + " WHERE title = ?";
-    try {
-      statement = connection.prepareStatement(query);
-
-      if (s.hasNext()) {
-        statement.setString(1, s.next());
-      } else {
-        System.out.println("Incorrect title!");
-        return;
-      }
-
-      statement.execute();
-    } catch (SQLException e) {
-      printException(e, "delete");
+    if (s.hasNext()) {
+      deleteItem(s.next());
+    } else {
+      System.out.println("Incorrect title!");
     }
   }
 
@@ -202,6 +175,53 @@ public class DBClass extends ADBClass {
       }
     } catch (SQLException e) {
       printException(e, "filter_by_price");
+    }
+  }
+
+  public void addItem(String title, int price) {
+    query = "INSERT INTO " + dbTable + "(prodid, title, price) VALUES (?, ?, ?)";
+    String subQuery = "SELECT EXISTS(SELECT title FROM " + dbTable + " WHERE title = ?)";
+    try {
+      statement = connection.prepareStatement(query);
+      PreparedStatement subStatement = connection.prepareStatement(subQuery);
+
+      int prodid = title.hashCode();
+      statement.setInt(1, prodid);
+      statement.setString(2, title);
+      subStatement.setString(1, title);
+
+      statement.setInt(3, price);
+
+      ResultSet rs = subStatement.executeQuery();
+      if (!rs.getBoolean(1)) {
+        statement.execute();
+      } else {
+        System.out.println("There is existing goods with given title.");
+      }
+    } catch (SQLException e) {
+      printException(e, "addItem");
+    }
+  }
+
+  public void deleteItem(String title) {
+    query = "DELETE FROM " + dbTable + " WHERE title = ?";
+    try {
+      statement = connection.prepareStatement(query);
+      statement.setString(1, title);
+
+      statement.execute();
+    } catch (SQLException e) {
+      printException(e, "delete");
+    }
+  }
+
+  public ResultSet getByQuery(String query) {
+    try {
+      statement = connection.prepareStatement(query);
+      return statement.executeQuery();
+    } catch (SQLException e) {
+      printException(e, "getByQuery");
+      return null;
     }
   }
 
