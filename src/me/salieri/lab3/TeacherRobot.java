@@ -36,7 +36,12 @@ public class TeacherRobot extends Thread implements Robot {
             break;
           }
 
-          sleep(student.getLabs() / labsPerTick * 100);
+          int labsToDo = student.getLabs();
+          while (labsToDo > 0) {
+            labsToDo -= labsPerTick;
+            sleep(10);
+            System.out.println(prefix + "принимает работы... Осталось: " + labsToDo);
+          }
           System.out.println(prefix + "принято " + student.getLabs() + " лабораторных.");
         } catch (NullPointerException e) {
           System.out.println(prefix + "Nullpo! Зашел на @channel.");
