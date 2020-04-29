@@ -123,28 +123,23 @@ public class DBClass extends ADBClass {
 
   @Override
   public void change_price(Scanner s) {
-    query = "UPDATE " + dbTable + " SET price = ? WHERE title = ?";
-    try {
-      statement = connection.prepareStatement(query);
-
-      if (s.hasNext()) {
-        statement.setString(2, s.next());
-      } else {
-        System.out.println("Incorrect title!");
-        return;
-      }
-
-      if (s.hasNextInt()) {
-        statement.setInt(1, s.nextInt());
-      } else {
-        System.out.println("Incorrect price!");
-        return;
-      }
-
-      statement.execute();
-    } catch (SQLException e) {
-      printException(e, "change_price");
+    String title;
+    if (s.hasNext()) {
+      title = s.next();
+    } else {
+      System.out.println("Incorrect title!");
+      return;
     }
+
+    int price;
+    if (s.hasNextInt()) {
+      price = s.nextInt();
+    } else {
+      System.out.println("Incorrect price!");
+      return;
+    }
+
+    updateItem(title, price);
   }
 
   @Override
@@ -200,6 +195,19 @@ public class DBClass extends ADBClass {
       }
     } catch (SQLException e) {
       printException(e, "addItem");
+    }
+  }
+
+  public void updateItem(String title, int price) {
+    query = "UPDATE " + dbTable + " SET price = ? WHERE title = ?";
+    try {
+      statement = connection.prepareStatement(query);
+      statement.setString(2, title);
+      statement.setInt(1, price);
+
+      statement.execute();
+    } catch (SQLException e) {
+      printException(e, "change_price");
     }
   }
 

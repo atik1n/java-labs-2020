@@ -24,6 +24,7 @@ public class MainGrid {
   public JList<String> goodsList;
   private JCheckBox checkBoxFilter;
   private JButton buttonDelete;
+  private JButton buttonUpdate;
 
   public MainGrid() {
     fieldTitle.addActionListener(fieldAction);
@@ -72,6 +73,31 @@ public class MainGrid {
         if (selected != null) {
           Scanner scanner = new Scanner(selected);
           db.deleteItem(scanner.next());
+          updateList();
+        }
+      }
+    });
+
+    buttonUpdate.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        String selected = goodsList.getSelectedValue();
+
+        if (fieldPrice.getText().isEmpty()) {
+          return;
+        }
+
+        int price;
+        try {
+          price = Integer.parseInt(fieldPrice.getText());
+        } catch (NumberFormatException exc) {
+          exc.printStackTrace();
+          return;
+        }
+
+        if (selected != null) {
+          Scanner scanner = new Scanner(selected);
+          db.updateItem(scanner.next(), price);
           updateList();
         }
       }
